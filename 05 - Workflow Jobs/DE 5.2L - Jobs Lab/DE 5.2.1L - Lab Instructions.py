@@ -139,7 +139,23 @@ DA.create_pipeline()
 
 # COMMAND ----------
 
+# ANSWER
+
+# This function is provided for students who do not 
+# want to work through the exercise of creating the job.
+DA.create_job()
+
+# COMMAND ----------
+
 DA.validate_job_config()
+
+# COMMAND ----------
+
+# ANSWER
+
+# This function is provided to start the job and  
+# block until it has completed, canceled or failed
+DA.start_job()
 
 # COMMAND ----------
 

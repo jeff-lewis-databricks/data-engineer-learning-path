@@ -56,51 +56,6 @@
 
 # COMMAND ----------
 
-# TODO
-import pyspark.sql.functions as F
- 
-source = spark.conf.get("source")
- 
-def status_bronze():
-    return (
-        spark.readStream
-            .format("cloudFiles")
-            .option("cloudFiles.format", "json")
-            .load(f"{source}/status")
-            .select(
-                F.current_timestamp().alias("processing_time"), 
-                F.input_file_name().alias("source_file"), 
-                "*"
-            )
-    )
- 
- 
-@dlt.table(
-    table_name = "status_silver"
-    )
-@dlt.expect_or_drop("valid_timestamp", "status_timestamp > 1640995200")
-def status_silver():
-    return (
-        dlt.read_stream("status_bronze")
-            .drop("source_file", "_rescued_data")
-    )
- 
- 
-@dlt.table
-def email_updates():
-    return (
-        spark.read("status_silver").alias("a")
-            .join(
-                dlt.read("subscribed_order_emails_v").alias("b"), 
-                on="order_id"
-            ).select(
-                "a.*", 
-                "b.email"
-            )
-    )
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC ## Solutions
 # MAGIC
@@ -117,6 +72,54 @@ def email_updates():
 # MAGIC 1. The **`@dlt.table`** decorator is missing before the function definition
 # MAGIC 1. The correct keyword argument to provide a custom table name is **`name`** not **`table_name`**
 # MAGIC 1. To perform a read on a table in the pipeline, use **`dlt.read`** not **`spark.read`**
+
+# COMMAND ----------
+
+# ANSWER
+import dlt
+import pyspark.sql.functions as F
+
+source = spark.conf.get("source")
+
+
+@dlt.table
+def status_bronze():
+    return (
+        spark.readStream
+            .format("cloudFiles")
+            .option("cloudFiles.format", "json")
+            .load(f"{source}/status")
+            .select(
+                F.current_timestamp().alias("processing_time"), 
+                F.input_file_name().alias("source_file"), 
+                "*"
+            )
+    )
+
+    
+@dlt.table(
+        name = "status_silver"
+    )
+@dlt.expect_or_drop("valid_timestamp", "status_timestamp > 1640995200")
+def status_silver():
+    return (
+        dlt.read_stream("status_bronze")
+            .drop("source_file", "_rescued_data")
+    )
+
+    
+@dlt.table
+def email_updates():
+    return (
+        dlt.read("status_silver").alias("a")
+            .join(
+                dlt.read("subscribed_order_emails_v").alias("b"), 
+                on="order_id"
+            ).select(
+                "a.*", 
+                "b.email"
+            )
+    )
 
 # COMMAND ----------
 

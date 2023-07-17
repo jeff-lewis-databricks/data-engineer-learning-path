@@ -67,6 +67,14 @@ DA.print_job_config_v1()
 
 # COMMAND ----------
 
+# ANSWER
+
+# This function is provided for students who do not 
+# want to work through the exercise of creating the job.
+DA.create_job_v1()
+
+# COMMAND ----------
+
 DA.validate_job_v1_config()
 
 # COMMAND ----------
@@ -149,7 +157,23 @@ DA.create_pipeline()
 
 # COMMAND ----------
 
+# ANSWER
+
+# This function is provided for students who do not 
+# want to work through the exercise of creating the job.
+DA.create_job_v2()
+
+# COMMAND ----------
+
 DA.validate_job_v2_config()
+
+# COMMAND ----------
+
+# ANSWER
+
+# This function is provided to start the pipeline and  
+# block until it has completed, canceled or failed
+DA.start_job()
 
 # COMMAND ----------
 

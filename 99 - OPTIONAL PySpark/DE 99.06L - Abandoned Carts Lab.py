@@ -59,10 +59,13 @@ display(events_df)
 
 # COMMAND ----------
 
-# TODO
+# ANSWER
 from pyspark.sql.functions import *
 
-converted_users_df = (sales_df.FILL_IN
+converted_users_df = (sales_df
+                      .select("email")
+                      .distinct()
+                      .withColumn("converted", lit(True))
                      )
 display(converted_users_df)
 
@@ -97,8 +100,11 @@ print("All test pass")
 
 # COMMAND ----------
 
-# TODO
-conversions_df = (users_df.FILL_IN
+# ANSWER
+conversions_df = (users_df
+                  .join(converted_users_df, "email", "outer")
+                  .filter(col("email").isNotNull())
+                  .na.fill(False)
                  )
 display(conversions_df)
 
@@ -137,9 +143,11 @@ print("All test pass")
 
 # COMMAND ----------
 
-# TODO
-carts_df = (events_df.FILL_IN
-)
+# ANSWER
+carts_df = (events_df
+            .withColumn("items", explode("items"))
+            .groupBy("user_id").agg(collect_set("items.item_id").alias("cart"))
+           )
 display(carts_df)
 
 # COMMAND ----------
@@ -171,8 +179,8 @@ print("All test pass")
 
 # COMMAND ----------
 
-# TODO
-email_carts_df = conversions_df.FILL_IN
+# ANSWER
+email_carts_df = conversions_df.join(carts_df, "user_id", "left")
 display(email_carts_df)
 
 # COMMAND ----------
@@ -211,9 +219,11 @@ print("All test pass")
 
 # COMMAND ----------
 
-# TODO
-abandoned_carts_df = (email_carts_df.FILL_IN
-)
+# ANSWER
+abandoned_carts_df = (email_carts_df
+                      .filter(col("converted") == False)
+                      .filter(col("cart").isNotNull())
+                     )
 display(abandoned_carts_df)
 
 # COMMAND ----------
@@ -241,8 +251,12 @@ print("All test pass")
 
 # COMMAND ----------
 
-# TODO
-abandoned_items_df = (abandoned_carts_df.FILL_IN
+# ANSWER
+abandoned_items_df = (abandoned_carts_df
+                      .withColumn("items", explode("cart"))
+                      .groupBy("items")
+                      .count()
+                      .sort("items")
                      )
 display(abandoned_items_df)
 

@@ -110,6 +110,14 @@ DA.print_pipeline_config(pipeline_language)
 
 # COMMAND ----------
 
+# ANSWER
+
+# This function is provided for students who do not 
+# want to work through the exercise of creating the pipeline.
+DA.create_pipeline(pipeline_language)
+
+# COMMAND ----------
+
 DA.validate_pipeline_config(pipeline_language)
 
 # COMMAND ----------
@@ -123,6 +131,14 @@ DA.validate_pipeline_config(pipeline_language)
 # MAGIC 2. Click **Start**.
 # MAGIC
 # MAGIC The initial run will take several minutes while a cluster is provisioned. Subsequent runs will be appreciably quicker.
+
+# COMMAND ----------
+
+# ANSWER
+
+# This function is provided to start the pipeline and  
+# block until it has completed, canceled or failed
+DA.start_pipeline()
 
 # COMMAND ----------
 
